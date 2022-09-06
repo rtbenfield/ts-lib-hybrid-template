@@ -10,7 +10,7 @@ A dual `tsc` build is required with separate options. These can be specified on 
   "extends": "./tsconfig.json",
   "compilerOptions": {
     "module": "CommonJS",
-    "moduleResolution": "classic",
+    "moduleResolution": "Node",
     "outDir": "./dist/cjs"
   }
 }
@@ -21,21 +21,37 @@ A dual `tsc` build is required with separate options. These can be specified on 
 {
   "extends": "./tsconfig.json",
   "compilerOptions": {
-    "module": "NodeNext",
-    "moduleResolution": "NodeNext",
+    "module": "Node16",
+    "moduleResolution": "Node16",
     "outDir": "./dist/esm"
   }
 }
 ```
 
-Add an export map to your `package.json`.
+Add an export map to your `package.json`. Be aware that named exports are only supported in consumers with `"moduleResolution": "Node16"` or `"moduleResolution": "NodeNext"`, but they can still use `"module": "CommonJS"`.
 
 ```json
-// package.json
+// package.json without named exports
 {
   "exports": {
     "import": "./dist/esm/index.js",
     "require": "./dist/cjs/index.js"
+  }
+}
+```
+
+```json
+// package.json with named exports
+{
+  "exports": {
+    "./extra": {
+      "require": "./dist/cjs/extras/index.js",
+      "import": "./dist/esm/extras/index.js"
+    },
+    ".": {
+      "require": "./dist/cjs/index.js",
+      "import": "./dist/esm/index.js"
+    }
   }
 }
 ```
